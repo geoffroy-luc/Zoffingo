@@ -1,0 +1,4 @@
+#Mon Dec 09 17:19:01 CET 2024
+base.0=/home/gluc/test/app_linguo/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
