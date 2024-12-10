@@ -54,6 +54,11 @@ class WordsScreenState extends State<WordsScreen> {
         if (index != -1) {
           widget.quiz.words[index] = editedWord;
           widget.quiz.words.sort((a, b) {
+            String aKey = a.korean.isNotEmpty ? a.korean.first : '';
+            String bKey = b.korean.isNotEmpty ? b.korean.first : '';
+            return aKey.compareTo(bKey);
+          });
+          widget.quiz.words.sort((a, b) {
             String aKey = a.english.isNotEmpty ? a.english.first : '';
             String bKey = b.english.isNotEmpty ? b.english.first : '';
             return aKey.compareTo(bKey);
@@ -89,7 +94,8 @@ class WordsScreenState extends State<WordsScreen> {
         itemBuilder: (context, index) {
           final word = widget.quiz.words[index];
           return ListTile(
-            title: Text('${word.english.join(', ')} - ${word.korean}'),
+            title:
+                Text('${word.english.join(', ')} - ${word.korean.join(', ')}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

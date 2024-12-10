@@ -3,7 +3,7 @@ import '../models/word.dart';
 
 class AddWordDialog extends StatefulWidget {
   final List<String>? initialEnglish;
-  final String? initialKorean;
+  final List<String>? initialKorean;
 
   const AddWordDialog({super.key, this.initialEnglish, this.initialKorean});
 
@@ -17,17 +17,21 @@ class AddWordDialogState extends State<AddWordDialog> {
 
   void _submit() {
     final englishInput = _englishController.text.trim();
-    final koreanWord = _koreanController.text.trim();
+    final koreanInput = _koreanController.text.trim();
 
-    if (englishInput.isNotEmpty && koreanWord.isNotEmpty) {
+    if (englishInput.isNotEmpty && koreanInput.isNotEmpty) {
       List<String> englishTranslations = englishInput
           .split(',')
           .map((e) => e.trim())
           .where((e) => e.isNotEmpty)
           .toList();
-
+      List<String> koreanTranslations = koreanInput
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
       Navigator.of(context)
-          .pop(Word(english: englishTranslations, korean: koreanWord));
+          .pop(Word(english: englishTranslations, korean: koreanTranslations));
     }
   }
 
@@ -37,7 +41,9 @@ class AddWordDialogState extends State<AddWordDialog> {
     _englishController = TextEditingController(
       text: widget.initialEnglish?.join(', ') ?? '',
     );
-    _koreanController = TextEditingController(text: widget.initialKorean ?? '');
+    _koreanController = TextEditingController(
+      text: widget.initialKorean?.join(', ') ?? '',
+    );
   }
 
   @override

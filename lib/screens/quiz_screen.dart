@@ -47,7 +47,7 @@ class QuizScreenState extends State<QuizScreen> {
     switch (widget.direction) {
       case LanguageDirection.englishToKorean:
         _askInEnglish = true;
-        _remainingTranslations = [currentWord.korean];
+        _remainingTranslations = List.from(currentWord.korean);
         break;
       case LanguageDirection.koreanToFrench:
         _askInEnglish = false;
@@ -56,7 +56,7 @@ class QuizScreenState extends State<QuizScreen> {
       case LanguageDirection.random:
         _askInEnglish = _random.nextBool();
         if (_askInEnglish) {
-          _remainingTranslations = [currentWord.korean];
+          _remainingTranslations = List.from(currentWord.korean);
         } else {
           _remainingTranslations = List.from(currentWord.english);
         }
@@ -67,23 +67,22 @@ class QuizScreenState extends State<QuizScreen> {
   }
 
   void _checkAnswer() {
-    final currentWord = _wordsToTest[_currentIndex];
+    bool isCorrect = _remainingTranslations.contains(_userAnswer);
     _userAnswer = _userAnswer.trim().toLowerCase();
 
     if (_askInEnglish) {
       // Traduction de Anglais vers Coréen
-      String correctAnswer = currentWord.korean.toLowerCase();
-      bool isCorrect = _userAnswer == correctAnswer;
+      // List<String> correctAnswers =
+      //     currentWord.korean.map((e) => e.toLowerCase()).toList();
 
       if (isCorrect) {
         setState(() {
           _isAnswerCorrect = true;
           _showAnswerFeedback = true;
-          _score++;
 
           _remainingTranslations.removeWhere(
-              (translation) => translation.toLowerCase() == correctAnswer);
-
+              (translation) => translation.toLowerCase() == _userAnswer);
+          if (_remainingTranslations.isEmpty) _score++;
           _attemptsLeft--;
         });
       } else {
@@ -95,20 +94,14 @@ class QuizScreenState extends State<QuizScreen> {
         });
       }
     } else {
-      // Traduction de Coréen vers Anglais
-      List<String> correctAnswers =
-          currentWord.english.map((e) => e.toLowerCase()).toList();
-      bool isCorrect = correctAnswers.contains(_userAnswer);
-
       if (isCorrect) {
         setState(() {
           _isAnswerCorrect = true;
           _showAnswerFeedback = true;
-          _score++;
 
           _remainingTranslations.removeWhere(
               (translation) => translation.toLowerCase() == _userAnswer);
-
+          if (_remainingTranslations.isEmpty) _score++;
           _attemptsLeft--;
         });
       } else {
@@ -120,8 +113,6 @@ class QuizScreenState extends State<QuizScreen> {
         });
       }
     }
-
-    // **Retirer les appels à _moveToNextWord() ici**
   }
 
   void _nextStep() {
@@ -165,13 +156,26 @@ class QuizScreenState extends State<QuizScreen> {
     }
 
     final currentWord = _wordsToTest[_currentIndex];
-    bool multipleAnswers = !_askInEnglish && currentWord.english.length > 1;
+    bool multipleAnswers;
+    if (!_askInEnglish) {
+      multipleAnswers = currentWord.english.length > 1;
+    } else {
+      multipleAnswers = currentWord.korean.length > 1;
+    }
+
     final wordToShow =
-        _askInEnglish ? currentWord.english.first : currentWord.korean;
+        _askInEnglish ? currentWord.english.first : currentWord.korean.first;
 
     String instruction;
     if (_askInEnglish) {
-      instruction = 'Traduisez ce mot anglais en coréen:';
+      if (multipleAnswers) {
+        int step =
+            currentWord.korean.length - _remainingTranslations.length + 1;
+        instruction =
+            'Traduisez ce mot anglais en coréen:\n(Étape $step/${currentWord.korean.length})';
+      } else {
+        instruction = 'Traduisez ce mot anglais en coréen:';
+      }
     } else {
       if (multipleAnswers) {
         int step =
@@ -185,7 +189,11 @@ class QuizScreenState extends State<QuizScreen> {
 
     String correctAnswer;
     if (_askInEnglish) {
-      correctAnswer = currentWord.korean;
+      if (multipleAnswers) {
+        correctAnswer = _remainingTranslations.join(', ');
+      } else {
+        correctAnswer = currentWord.korean.first;
+      }
     } else {
       if (multipleAnswers) {
         correctAnswer = _remainingTranslations.join(', ');
@@ -239,7 +247,7 @@ class QuizScreenState extends State<QuizScreen> {
                   Text(
                     _isAnswerCorrect
                         ? 'Correct!'
-                        : 'Faux! La bonne réponse est: $correctAnswer.',
+                        : 'Faux! ${_attemptsLeft == 0 ? 'La bonne réponse est: $correctAnswer.' : ''}',
                     style: TextStyle(
                       color: _isAnswerCorrect ? Colors.green : Colors.red,
                       fontSize: 20,
@@ -263,7 +271,12 @@ class QuizScreenState extends State<QuizScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Score: $_score / ${_wordsToTest.length}',
+              'Score: $_score',
+              style: const TextStyle(fontSize: 18, color: Colors.green),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Words: ${_currentIndex + 1} / ${_wordsToTest.length}',
               style: const TextStyle(fontSize: 18),
             ),
           ],

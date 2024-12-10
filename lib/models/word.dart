@@ -1,6 +1,6 @@
 class Word {
   List<String> english;
-  String korean;
+  List<String> korean;
 
   Word({
     required this.english,
@@ -17,7 +17,7 @@ class Word {
   factory Word.fromJson(Map<String, dynamic> json) {
     return Word(
       english: List<String>.from(json['english']),
-      korean: json['korean'],
+      korean: List<String>.from(json['korean']),
     );
   }
 }
