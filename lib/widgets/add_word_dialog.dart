@@ -20,7 +20,6 @@ class AddWordDialogState extends State<AddWordDialog> {
     final koreanWord = _koreanController.text.trim();
 
     if (englishInput.isNotEmpty && koreanWord.isNotEmpty) {
-      // Séparer les traductions anglaises par des virgules
       List<String> englishTranslations = englishInput
           .split(',')
           .map((e) => e.trim())
@@ -57,25 +56,35 @@ class AddWordDialogState extends State<AddWordDialog> {
         children: [
           TextField(
             controller: _englishController,
-            decoration: const InputDecoration(
-                labelText: 'Mots en anglais (séparés par des virgules)'),
+            decoration: const InputDecoration(labelText: 'Mots en anglais'),
           ),
           TextField(
             controller: _koreanController,
             decoration: const InputDecoration(labelText: 'Mot en coréen'),
           ),
+          const SizedBox(height: 20),
+          const Text(
+            '*si plusieurs significations, séparez les avec de virgules',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: _submit,
+                child: const Text('Ajouter'),
+              ),
+            ],
+          ),
         ],
       ),
-      actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annuler'),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Ajouter'),
-        ),
-      ],
     );
   }
 }

@@ -175,6 +175,7 @@ class HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            iconSize: 30,
             onPressed: _addQuiz,
           ),
         ],
