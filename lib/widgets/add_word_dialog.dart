@@ -62,15 +62,15 @@ class AddWordDialogState extends State<AddWordDialog> {
         children: [
           TextField(
             controller: _englishController,
-            decoration: const InputDecoration(labelText: 'Mots en anglais'),
+            decoration: const InputDecoration(labelText: 'Mot(s) en anglais'),
           ),
           TextField(
             controller: _koreanController,
-            decoration: const InputDecoration(labelText: 'Mot en coréen'),
+            decoration: const InputDecoration(labelText: 'Mot(s) en coréen'),
           ),
           const SizedBox(height: 20),
           const Text(
-            '*si plusieurs significations, séparez les avec de virgules',
+            '*si plusieurs significations, séparez les avec des virgules',
             style: TextStyle(
               color: Colors.grey,
             ),
